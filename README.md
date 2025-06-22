@@ -1,7 +1,9 @@
 # LPanner VST3 Plugin
 
-**Version:** 1.0.0
+**Version:** 1.0.1
 **Developer:** liquid1224
+
+![screenshot](/Readme.assets/screenshot.png)
 
 ## Overview
 
@@ -107,6 +109,18 @@ MIT
 ## Support
 
 Create new issue for support, bug reports, or feature requests.
+
+## Changelog
+
+### 1.0.1
+
+- Added "Bypass" button
+- Refactor `App.tsx`
+- Adjusted hover lock duration (0.3s -> 0.5s)
+
+## 1.0.0
+
+- Initial release
 
 ------
 
