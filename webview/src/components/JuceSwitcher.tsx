@@ -13,7 +13,7 @@ interface JuceSwitcherProps {
   onChange?: (index: boolean) => void;
 }
 
-const JuceSwitcher: FC<JuceSwitcherProps> = ({ identifier, titles, level, style, className, hoverLockDuration = 300, onChange }) => {
+const JuceSwitcher: FC<JuceSwitcherProps> = ({ identifier, titles, level, style, className, hoverLockDuration = 500, onChange }) => {
   const comboBoxState = getComboBoxState(identifier);
   const [currentIndex, setCurrentIndex] = useState(comboBoxState.getChoiceIndex());
   const [isHovered, setIsHovered] = useState(false);
@@ -80,7 +80,7 @@ const JuceSwitcher: FC<JuceSwitcherProps> = ({ identifier, titles, level, style,
         style={{
           ...style,
           scale: shouldShowPreview ? 0.8 : 1.0,
-          color: shouldShowPreview ? "#575252" : undefined,
+          color: shouldShowPreview ? "#575252" : "#3e3737",
           transition: "color 0.2s, scale 0.2s",
         }}
         className={className}

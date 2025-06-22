@@ -115,8 +115,8 @@ const JuceSlider: FC<JuceSliderProps> = ({ identifier, isVertical = false, min =
 
   // スライダーの色を動的に設定
   const getSliderColors = () => ({
-    "--default-color": normalizedValue < 0.5 ? defaultColor : "#ccc",
-    "--accent-color": normalizedValue >= 0.5 ? accentColor : "#ccc",
+    "--default-color": normalizedValue < 0.5 ? defaultColor : "#575252",
+    "--accent-color": normalizedValue >= 0.5 ? accentColor : "#575252",
   });
 
   return (

@@ -1,7 +1,0 @@
-﻿     ライブラリ C:\JUCE\projects\LPanner\Builds\VisualStudio2022\x64\Release\VST3\LPanner.lib とオブジェクト C:\JUCE\projects\LPanner\Builds\VisualStudio2022\x64\Release\VST3\LPanner.exp を作成中
-  コード生成しています。
-  コード生成が終了しました。
-  LPanner_VST3.vcxproj -> C:\JUCE\projects\LPanner\Builds\VisualStudio2022\x64\Release\VST3\LPanner.dll
-          1 個のファイルをコピーしました。
-  削除したファイル - C:\JUCE\projects\LPanner\Builds\VisualStudio2022\x64\Release\VST3\LPanner.vst3\Contents\Resources\moduleinfo.json
-  : Info: Successfully generated a manifest for LPanner

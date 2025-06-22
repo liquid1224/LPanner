@@ -74,7 +74,7 @@
   border: none;
   background-color: inherit;
   text-align: center;
-  color: inherit;
+  color: #3e3737 !important;
 }
 
 .juce-slider-wrapper .juce-slider-input:focus {

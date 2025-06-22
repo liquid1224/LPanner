@@ -7,47 +7,99 @@ import "./App.css";
 import JuceSwitcher from "./components/JuceSwitcher";
 import JuceSlider from "./components/JuceSlider";
 import JuceKnob from "./components/JuceKnob";
+import JuceBypassButton from "./components/JuceBypassButton";
+
+// デザインテーマの定数
+const THEME = {
+  colors: {
+    background: "#9c7474",
+    primary: "#3e3737",
+    accent: "#9c3e3e",
+    secondary: "#575252",
+  },
+  spacing: {
+    container: "25px 40px",
+  },
+} as const;
+
+// コンポーネントのスタイル定数
+const STYLES = {
+  title: {
+    margin: "0",
+    fontWeight: "normal" as const,
+    color: THEME.colors.primary,
+  },
+  versionText: {
+    fontSize: "8px",
+    color: THEME.colors.primary,
+  },
+  subtitle: {
+    margin: "0",
+    fontWeight: "normal" as const,
+    color: THEME.colors.primary,
+  },
+  delayTitle: {
+    margin: 0,
+    fontWeight: "normal" as const,
+    fontSize: "18px",
+    color: THEME.colors.primary,
+  },
+} as const;
 
 const App: FC = () => {
   const [isModern, setIsModern] = useState<boolean>(false);
-  useEffect(() => {
-    // @ts-expect-error Juce does not have types
-    import("juce-framework-frontend").then(({ getComboBoxState }) => {
-      const stereoModeState = getComboBoxState("stereoMode");
-      const initialIndex = stereoModeState.getChoiceIndex();
-      setIsModern(initialIndex === 1);
-    });
-  }, []);
 
-  // Detect Space
+  // 初期化：Stereo Modeの状態を取得
   useEffect(() => {
-    const pressSpaceKey = getNativeFunction("pressSpaceKey");
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.code === "Space") {
-        pressSpaceKey().then(() => {
-          console.log("Space key pressed");
-        });
+    const initializeStereoMode = async () => {
+      try {
+        // @ts-expect-error Juce does not have types
+        const { getComboBoxState } = await import("juce-framework-frontend");
+        const stereoModeState = getComboBoxState("stereoMode");
+        const initialIndex = stereoModeState.getChoiceIndex();
+        setIsModern(initialIndex === 1);
+      } catch (error) {
+        console.error("Failed to initialize stereo mode:", error);
       }
     };
-    window.addEventListener("keydown", handleKeyDown);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    initializeStereoMode();
   }, []);
 
-  // Disable zoom
+  // スペースキー検出
+  useEffect(() => {
+    const pressSpaceKey = getNativeFunction("pressSpaceKey");
+
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.code === "Space") {
+        try {
+          await pressSpaceKey();
+          console.log("Space key pressed");
+        } catch (error) {
+          console.error("Failed to handle space key press:", error);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // ズーム無効化
   useEffect(() => {
     const disableZoom = (e: WheelEvent) => {
       if (e.ctrlKey) {
         e.preventDefault();
       }
     };
+
     const disableKeyZoom = (e: KeyboardEvent) => {
-      if (e.ctrlKey && [";", "+", "-", "=", "_"].includes(e.key)) {
+      const zoomKeys = [";", "+", "-", "=", "_"];
+      if (e.ctrlKey && zoomKeys.includes(e.key)) {
         e.preventDefault();
       }
     };
+
     window.addEventListener("wheel", disableZoom, { passive: false });
     window.addEventListener("keydown", disableKeyZoom);
 
@@ -61,46 +113,70 @@ const App: FC = () => {
     setIsModern(index);
   };
 
+  // ヘッダーセクション
+  const renderHeader = () => (
+    <Flex align="center" gap="middle">
+      <Typography.Title level={1} style={STYLES.title}>
+        LPanner
+      </Typography.Title>
+      <Typography.Text style={STYLES.versionText}>
+        Ver 1.0.1 <br />
+        by liquid1224
+      </Typography.Text>
+      <JuceBypassButton identifier="bypass" />
+    </Flex>
+  );
+
+  // Stereo Modeセクション
+  const renderStereoSection = () => (
+    <Flex justify="space-between" align="center" style={{ width: "100%" }}>
+      <Flex gap="middle">
+        <Typography.Title level={2} style={STYLES.subtitle}>
+          Stereo Image:
+        </Typography.Title>
+        <JuceSwitcher identifier="stereoMode" titles={["Classic", "Modern"]} level={2} style={STYLES.subtitle} className="stereo-selector-text" onChange={handleStereoModeChange} />
+      </Flex>
+      {isModern && (
+        <Flex align="start">
+          <Typography.Title level={3} style={STYLES.delayTitle}>
+            Delay Time
+          </Typography.Title>
+          <JuceKnob identifier="delay" min={1.0} max={20.0} defaultValue={5.0} defaultColor={THEME.colors.primary} accentColor={THEME.colors.accent} size={20} />
+        </Flex>
+      )}
+    </Flex>
+  );
+
+  // Stereoスライダーセクション
+  const renderStereoSlider = () => <JuceSlider identifier="stereo" min={0} max={200} mark={0.5} defaultColor={THEME.colors.secondary} accentColor={THEME.colors.accent} />;
+
+  // Rotationセクション
+  const renderRotationSection = () => (
+    <>
+      <Typography.Title level={2} style={STYLES.subtitle}>
+        Rotation
+      </Typography.Title>
+      <JuceSlider identifier="rotation" min={-50} max={50} mark={0.5} defaultColor={THEME.colors.secondary} accentColor={THEME.colors.accent} />
+    </>
+  );
+
   return (
     <Layout className="root">
-      <Flex vertical gap="middle" justify="space-between" align="start" style={{ padding: "25px 40px", height: "100vh", background: "#9c7474" }}>
-        <Flex align="center" gap="middle">
-          <Typography.Title level={1} style={{ margin: "0", fontWeight: "normal" }}>
-            LPanner
-          </Typography.Title>
-          <Typography.Text style={{ fontSize: "10px" }}>
-            Ver 1.0.0 <br />
-            by liquid1224
-          </Typography.Text>
-        </Flex>
-        <Flex justify="space-between" align="center" style={{ width: "100%" }}>
-          <Flex gap="middle">
-            <Typography.Title level={2} style={{ margin: "0", fontWeight: "normal" }}>
-              Stereo Image:
-            </Typography.Title>
-            <JuceSwitcher
-              identifier="stereoMode"
-              titles={["Classic", "Modern"]}
-              level={2}
-              style={{ margin: "0", fontWeight: "normal" }}
-              className="stereo-selector-text"
-              onChange={handleStereoModeChange}
-            />
-          </Flex>
-          {isModern && (
-            <Flex align="start">
-              <Typography.Title level={3} style={{ margin: 0, fontWeight: "normal", fontSize: "18px" }}>
-                Delay Time
-              </Typography.Title>
-              <JuceKnob identifier="delay" min={1.0} max={20.0} defaultValue={5.0} defaultColor="#3e3737" accentColor="#9c3e3e" size={20} />
-            </Flex>
-          )}
-        </Flex>
-        <JuceSlider identifier="stereo" min={0} max={200} mark={0.5} defaultColor="#575252" accentColor="#9c3e3e" />
-        <Typography.Title level={2} style={{ margin: "0", fontWeight: "normal" }}>
-          Rotation
-        </Typography.Title>
-        <JuceSlider identifier="rotation" min={-50} max={50} mark={0.5} defaultColor="#575252" accentColor="#9c3e3e" />
+      <Flex
+        vertical
+        gap="middle"
+        justify="space-between"
+        align="start"
+        style={{
+          padding: THEME.spacing.container,
+          height: "100vh",
+          background: THEME.colors.background,
+        }}
+      >
+        {renderHeader()}
+        {renderStereoSection()}
+        {renderStereoSlider()}
+        {renderRotationSection()}
       </Flex>
     </Layout>
   );

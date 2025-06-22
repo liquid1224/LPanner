@@ -1,1 +1,0 @@
-C:\JUCE\projects\LPanner\Builds\VisualStudio2022\x64\Release\Standalone Plugin\LPanner.exe
