@@ -1,7 +1,7 @@
 # LPanner VST3 Plugin
 
 **Version:** 1.0.0
- **Developer:** liquid1224
+**Developer:** liquid1224
 
 ## Overview
 
@@ -36,9 +36,7 @@ LPanner is a stereo imaging and rotation plugin built with JUCE framework. This 
 
 1. Download the plugin from the releases page
 
-2. Navigate to: `Builds/VisualStudio2022/x64/Release/VST3/LPanner.vst3/Contents/x86_64-win/`
-
-3. Copy 
+2. Copy 
 
    ```
    LPanner.vst3
@@ -50,7 +48,7 @@ LPanner is a stereo imaging and rotation plugin built with JUCE framework. This 
    C:/Program Files/Common Files/VST3/
    ```
 
-4. Restart your DAW and the plugin will appear in the FX list
+3. Restart your DAW and the plugin will appear in the FX list
 
 ### System Requirements
 
@@ -62,11 +60,14 @@ LPanner is a stereo imaging and rotation plugin built with JUCE framework. This 
 
 ### Basic Operation
 
-1. Load LPanner on a stereo audio track
+1. Load LPanner on an audio track
 2. Choose between **Classic** or **Modern** stereo processing mode
+   - Classic is for stereo tracks (No effect on mono track)
+   - Modern is usable for both stereo and mono tracks
+     - If Modern, you can adjust delay time to fine tune
 3. Adjust the **Stereo** slider to control width (100% = original)
 4. Use **Rotation** to pan the stereo field left or right
-5. In Modern mode, fine-tune the **Delay Time** for different spatial effects
+   - Recommend to narrow down stereo image before rotating
 
 ### Parameters
 
@@ -101,11 +102,11 @@ This plugin is built using the JUCE framework with a React-based web interface. 
 
 ## License
 
-[Specify your license here]
+MIT
 
 ## Support
 
-For support, bug reports, or feature requests, please [contact information or repository link].
+Create new issue for support, bug reports, or feature requests.
 
 ------
 
