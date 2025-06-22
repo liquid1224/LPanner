@@ -1,5 +1,7 @@
 import { useEffect, useState, type FC } from "react";
 import { Layout, Flex, Typography } from "antd";
+// @ts-expect-error Juce does not have types
+import { getNativeFunction } from "juce-framework-frontend";
 import "@fontsource/zen-dots/index.css";
 import "./App.css";
 import JuceSwitcher from "./components/JuceSwitcher";
@@ -15,6 +17,23 @@ const App: FC = () => {
       const initialIndex = stereoModeState.getChoiceIndex();
       setIsModern(initialIndex === 1);
     });
+  }, []);
+
+  // Detect Space
+  useEffect(() => {
+    const pressSpaceKey = getNativeFunction("pressSpaceKey");
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === "Space") {
+        pressSpaceKey().then(() => {
+          console.log("Space key pressed");
+        });
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   // Disable zoom

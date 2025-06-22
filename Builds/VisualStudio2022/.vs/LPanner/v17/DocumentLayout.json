@@ -3,10 +3,10 @@
   "WorkspaceRootPath": "C:\\JUCE\\projects\\LPanner\\Builds\\VisualStudio2022\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CD8B8202-871F-8E9A-7333-05962B3D3926}|LPanner_SharedCode.vcxproj|C:\\JUCE\\projects\\LPanner\\Source\\PluginProcessor.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{CD8B8202-871F-8E9A-7333-05962B3D3926}|LPanner_SharedCode.vcxproj|C:\\JUCE\\projects\\LPanner\\Source\\PluginEditor.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CD8B8202-871F-8E9A-7333-05962B3D3926}|LPanner_SharedCode.vcxproj|C:\\JUCE\\projects\\LPanner\\Source\\PluginEditor.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{CD8B8202-871F-8E9A-7333-05962B3D3926}|LPanner_SharedCode.vcxproj|C:\\JUCE\\projects\\LPanner\\Source\\PluginProcessor.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CD8B8202-871F-8E9A-7333-05962B3D3926}|LPanner_SharedCode.vcxproj|C:\\JUCE\\projects\\LPanner\\Source\\PluginEditor.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
@@ -22,7 +22,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,13 +42,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "PluginEditor.h",
               "DocumentMoniker": "C:\\JUCE\\projects\\LPanner\\Source\\PluginEditor.h",
               "RelativeDocumentMoniker": "..\\..\\Source\\PluginEditor.h",
               "ToolTip": "C:\\JUCE\\projects\\LPanner\\Source\\PluginEditor.h",
               "RelativeToolTip": "..\\..\\Source\\PluginEditor.h",
-              "ViewState": "AgIAACoAAAAAAAAAAAAAADAAAAAWAAAAAAAAAA==",
+              "ViewState": "AgIAADYAAAAAAAAAAAAAAFcAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-06-17T11:32:58.756Z",
               "EditorCaption": ""
@@ -61,23 +61,21 @@
               "RelativeDocumentMoniker": "..\\..\\Source\\PluginEditor.cpp",
               "ToolTip": "C:\\JUCE\\projects\\LPanner\\Source\\PluginEditor.cpp",
               "RelativeToolTip": "..\\..\\Source\\PluginEditor.cpp",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-06-17T11:32:34.437Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-17T11:32:34.437Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "PluginProcessor.h",
               "DocumentMoniker": "C:\\JUCE\\projects\\LPanner\\Source\\PluginProcessor.h",
               "RelativeDocumentMoniker": "..\\..\\Source\\PluginProcessor.h",
               "ToolTip": "C:\\JUCE\\projects\\LPanner\\Source\\PluginProcessor.h",
               "RelativeToolTip": "..\\..\\Source\\PluginProcessor.h",
-              "ViewState": "AgIAADAAAAAAAAAAAAAAAEkAAAB9AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEkAAAB9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-06-16T00:30:19.331Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-16T00:30:19.331Z"
             },
             {
               "$type": "Document",
@@ -87,10 +85,9 @@
               "RelativeDocumentMoniker": "..\\..\\Source\\PluginProcessor.cpp",
               "ToolTip": "C:\\JUCE\\projects\\LPanner\\Source\\PluginProcessor.cpp",
               "RelativeToolTip": "..\\..\\Source\\PluginProcessor.cpp",
-              "ViewState": "AgIAAM8AAAAAAAAAAAApwOYAAAA9AAAAAAAAAA==",
+              "ViewState": "AgIAAKgAAAAAAAAAAAApwOYAAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-06-16T05:31:22.18Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-16T05:31:22.18Z"
             }
           ]
         }

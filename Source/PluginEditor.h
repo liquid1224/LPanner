@@ -10,6 +10,8 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#define NOMINMAX
+#include "Windows.h"
 
 struct SinglePageBrowser : juce::WebBrowserComponent {
     using WebBrowserComponent::WebBrowserComponent;
@@ -66,6 +68,24 @@ private:
 		    .withOptionsFrom(rotationRelay)
 		    .withOptionsFrom(bypassRelay)
             .withOptionsFrom(controlParameterIndexReceiver)
+            .withNativeFunction("pressSpaceKey",
+                [this](auto& var, auto complete) {
+                    DBG("pressSpaceKey");
+                    // get window handle
+                    auto hwnd = webComponent.getWindowHandle();
+
+                    // setfocus
+                    SetFocus(static_cast<HWND>(hwnd));
+
+                    INPUT input;
+                    input.type = INPUT_KEYBOARD;
+                    input.ki.wVk = VK_SPACE;
+                    SendInput(1, &input, sizeof(INPUT));
+                    input.ki.dwFlags = KEYEVENTF_KEYUP;
+                    SendInput(1, &input, sizeof(INPUT));
+
+                    complete({});
+            })
             .withResourceProvider(
                 [this](const auto& url) { return getResource(url); },
                 juce::URL{"http://localhost:5173/"}.getOrigin())};

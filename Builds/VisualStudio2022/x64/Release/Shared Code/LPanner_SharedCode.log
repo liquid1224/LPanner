@@ -1,10 +1,91 @@
-﻿  PluginEditor.cpp
+﻿  BinaryData.cpp
+  PluginEditor.cpp
   PluginProcessor.cpp
+C:\JUCE\projects\LPanner\Source\PluginEditor.h(58,23): warning C4100: 'var': 参照されないパラメーター
+  (ソース ファイル '../../Source/PluginProcessor.cpp' をコンパイルしています)
+      C:\JUCE\projects\LPanner\Source\PluginEditor.h(58,23):
+      テンプレートインスタンス化コンテキスト (最初に最も古いもの) は
+          C:\JUCE\projects\LPanner\Source\PluginEditor.h(58,23):
+          クラス テンプレート メンバー関数 'std::function<void (const juce::Array<juce::var,juce::DummyCriticalSection,0> &,juce::WebBrowserComponent::NativeFunctionCompletion)>::function(_Fx &&)' のコンパイル中
+          C:\JUCE\projects\LPanner\Source\PluginEditor.h(58,23):
+          'std::function<void (const juce::Array<juce::var,juce::DummyCriticalSection,0> &,juce::WebBrowserComponent::NativeFunctionCompletion)>::function(_Fx &&)' の既定のテンプレート引数の処理中
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\functional(1102,92):
+          コンパイル対象の エイリアス テンプレート インスタンス化 'std::_Func_class<_Ret,const juce::Array<juce::var,juce::DummyCriticalSection,0> &,juce::WebBrowserComponent::NativeFunctionCompletion>::_Enable_if_callable_t<LPannerAudioProcessorEditor::<lambda_194b4a4c4969a2bec1774092ed8172a5>,std::function<void (const juce::Array<juce::var,juce::DummyCriticalSection,0> &,juce::WebBrowserComponent::NativeFunctionCompletion)>>' のリファレンスを確認してください
+          with
+          [
+              _Ret=void
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\functional(940,47):
+          コンパイルされている変数テンプレート 'const bool conjunction_v<std::negation<std::is_same<<lambda_194b4a4c4969a2bec1774092ed8172a5>,std::function<void __cdecl(juce::Array<juce::var,juce::DummyCriticalSection,0> const &,std::function<void __cdecl(juce::var)>)> > >,std::_Is_invocable_r<void,<lambda_194b4a4c4969a2bec1774092ed8172a5> &,juce::Array<juce::var,juce::DummyCriticalSection,0> const &,std::function<void __cdecl(juce::var)> > >' のリファレンスをご参照ください
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\functional(940,47):
+          コンパイル対象の クラス テンプレート インスタンス化 'std::_Is_invocable_r<_Ret,LPannerAudioProcessorEditor::<lambda_194b4a4c4969a2bec1774092ed8172a5> &,const juce::Array<juce::var,juce::DummyCriticalSection,0> &,juce::WebBrowserComponent::NativeFunctionCompletion>' のリファレンスを確認してください
+          with
+          [
+              _Ret=void
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\type_traits(1827,26):
+          コンパイル対象の エイリアス テンプレート インスタンス化 'std::_Is_invocable_r_<_Rx,_Callable,const juce::Array<juce::var,juce::DummyCriticalSection,0>&,juce::WebBrowserComponent::NativeFunctionCompletion>' のリファレンスを確認してください
+          with
+          [
+              _Rx=void,
+              _Callable=LPannerAudioProcessorEditor::<lambda_194b4a4c4969a2bec1774092ed8172a5> &
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\type_traits(1789,38):
+          コンパイル対象の エイリアス テンプレート インスタンス化 'std::_Decltype_invoke_nonzero<_Callable,const juce::Array<juce::var,juce::DummyCriticalSection,0>&,juce::WebBrowserComponent::NativeFunctionCompletion>' のリファレンスを確認してください
+          with
+          [
+              _Callable=LPannerAudioProcessorEditor::<lambda_194b4a4c4969a2bec1774092ed8172a5> &
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\type_traits(1785,71):
+          クラス テンプレート メンバー関数 'unknown-type std::_Invoker_functor::_Call(_Callable &&,_Types ...) noexcept(<expr>)' のコンパイル中
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\type_traits(1576,46):
+          コンパイル対象の関数 テンプレート インスタンス化 'void LPannerAudioProcessorEditor::<lambda_194b4a4c4969a2bec1774092ed8172a5>::operator ()<const juce::Array<juce::var,juce::DummyCriticalSection,0>,juce::WebBrowserComponent::NativeFunctionCompletion>(const juce::Array<juce::var,juce::DummyCriticalSection,0> &,juce::WebBrowserComponent::NativeFunctionCompletion) const' のリファレンスを確認してください
+  
 C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(80,52): warning C4100: 'index': 参照されないパラメーター
 C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(84,63): warning C4100: 'index': 参照されないパラメーター
 C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(89,79): warning C4100: 'newName': 参照されないパラメーター
 C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(89,52): warning C4100: 'index': 参照されないパラメーター
 C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(94,67): warning C4100: 'samplesPerBlock': 参照されないパラメーター
+C:\JUCE\projects\LPanner\Source\PluginEditor.h(58,23): warning C4100: 'var': 参照されないパラメーター
+  (ソース ファイル '../../Source/PluginEditor.cpp' をコンパイルしています)
+      C:\JUCE\projects\LPanner\Source\PluginEditor.h(58,23):
+      テンプレートインスタンス化コンテキスト (最初に最も古いもの) は
+          C:\JUCE\projects\LPanner\Source\PluginEditor.h(58,23):
+          クラス テンプレート メンバー関数 'std::function<void (const juce::Array<juce::var,juce::DummyCriticalSection,0> &,juce::WebBrowserComponent::NativeFunctionCompletion)>::function(_Fx &&)' のコンパイル中
+          C:\JUCE\projects\LPanner\Source\PluginEditor.h(58,23):
+          'std::function<void (const juce::Array<juce::var,juce::DummyCriticalSection,0> &,juce::WebBrowserComponent::NativeFunctionCompletion)>::function(_Fx &&)' の既定のテンプレート引数の処理中
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\functional(1102,92):
+          コンパイル対象の エイリアス テンプレート インスタンス化 'std::_Func_class<_Ret,const juce::Array<juce::var,juce::DummyCriticalSection,0> &,juce::WebBrowserComponent::NativeFunctionCompletion>::_Enable_if_callable_t<LPannerAudioProcessorEditor::<lambda_194b4a4c4969a2bec1774092ed8172a5>,std::function<void (const juce::Array<juce::var,juce::DummyCriticalSection,0> &,juce::WebBrowserComponent::NativeFunctionCompletion)>>' のリファレンスを確認してください
+          with
+          [
+              _Ret=void
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\functional(940,47):
+          コンパイルされている変数テンプレート 'const bool conjunction_v<std::negation<std::is_same<<lambda_194b4a4c4969a2bec1774092ed8172a5>,std::function<void __cdecl(juce::Array<juce::var,juce::DummyCriticalSection,0> const &,std::function<void __cdecl(juce::var)>)> > >,std::_Is_invocable_r<void,<lambda_194b4a4c4969a2bec1774092ed8172a5> &,juce::Array<juce::var,juce::DummyCriticalSection,0> const &,std::function<void __cdecl(juce::var)> > >' のリファレンスをご参照ください
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\functional(940,47):
+          コンパイル対象の クラス テンプレート インスタンス化 'std::_Is_invocable_r<_Ret,LPannerAudioProcessorEditor::<lambda_194b4a4c4969a2bec1774092ed8172a5> &,const juce::Array<juce::var,juce::DummyCriticalSection,0> &,juce::WebBrowserComponent::NativeFunctionCompletion>' のリファレンスを確認してください
+          with
+          [
+              _Ret=void
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\type_traits(1827,26):
+          コンパイル対象の エイリアス テンプレート インスタンス化 'std::_Is_invocable_r_<_Rx,_Callable,const juce::Array<juce::var,juce::DummyCriticalSection,0>&,juce::WebBrowserComponent::NativeFunctionCompletion>' のリファレンスを確認してください
+          with
+          [
+              _Rx=void,
+              _Callable=LPannerAudioProcessorEditor::<lambda_194b4a4c4969a2bec1774092ed8172a5> &
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\type_traits(1789,38):
+          コンパイル対象の エイリアス テンプレート インスタンス化 'std::_Decltype_invoke_nonzero<_Callable,const juce::Array<juce::var,juce::DummyCriticalSection,0>&,juce::WebBrowserComponent::NativeFunctionCompletion>' のリファレンスを確認してください
+          with
+          [
+              _Callable=LPannerAudioProcessorEditor::<lambda_194b4a4c4969a2bec1774092ed8172a5> &
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\type_traits(1785,71):
+          クラス テンプレート メンバー関数 'unknown-type std::_Invoker_functor::_Call(_Callable &&,_Types ...) noexcept(<expr>)' のコンパイル中
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\type_traits(1576,46):
+          コンパイル対象の関数 テンプレート インスタンス化 'void LPannerAudioProcessorEditor::<lambda_194b4a4c4969a2bec1774092ed8172a5>::operator ()<const juce::Array<juce::var,juce::DummyCriticalSection,0>,juce::WebBrowserComponent::NativeFunctionCompletion>(const juce::Array<juce::var,juce::DummyCriticalSection,0> &,juce::WebBrowserComponent::NativeFunctionCompletion) const' のリファレンスを確認してください
+  
 C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(208,24): warning C4244: '=': 'double' から 'Type' への変換です。データが失われる可能性があります。
 C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(208,24): warning C4244:         with
 C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(208,24): warning C4244:         [
