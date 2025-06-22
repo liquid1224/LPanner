@@ -118,7 +118,7 @@ Create new issue for support, bug reports, or feature requests.
 - Refactor `App.tsx`
 - Adjusted hover lock duration (0.3s -> 0.5s)
 
-## 1.0.0
+### 1.0.0
 
 - Initial release
 
