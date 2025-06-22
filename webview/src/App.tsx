@@ -64,9 +64,15 @@ const App: FC = () => {
   return (
     <Layout className="root">
       <Flex vertical gap="middle" justify="space-between" align="start" style={{ padding: "25px 40px", height: "100vh", background: "#9c7474" }}>
-        <Typography.Title level={1} style={{ margin: "0", fontWeight: "normal" }}>
-          LPanner
-        </Typography.Title>
+        <Flex align="center" gap="middle">
+          <Typography.Title level={1} style={{ margin: "0", fontWeight: "normal" }}>
+            LPanner
+          </Typography.Title>
+          <Typography.Text style={{ fontSize: "10px" }}>
+            Ver 1.0.0 <br />
+            by liquid1224
+          </Typography.Text>
+        </Flex>
         <Flex justify="space-between" align="center" style={{ width: "100%" }}>
           <Flex gap="middle">
             <Typography.Title level={2} style={{ margin: "0", fontWeight: "normal" }}>

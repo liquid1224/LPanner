@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="Zj8CBS" name="LPanner" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyName="FLOPP"
-              companyWebsite="liquid1224.net">
+              companyWebsite="liquid1224.net" version="1.0.0">
   <MAINGROUP id="LHeBSr" name="LPanner">
     <GROUP id="{629E7E50-EBB3-861E-0CB9-511B41D089BE}" name="Source">
       <FILE id="Vdsny4" name="PluginProcessor.cpp" compile="1" resource="0"
