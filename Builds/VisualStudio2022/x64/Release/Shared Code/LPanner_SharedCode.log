@@ -1,0 +1,25 @@
+﻿  PluginEditor.cpp
+  PluginProcessor.cpp
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(80,52): warning C4100: 'index': 参照されないパラメーター
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(84,63): warning C4100: 'index': 参照されないパラメーター
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(89,79): warning C4100: 'newName': 参照されないパラメーター
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(89,52): warning C4100: 'index': 参照されないパラメーター
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(94,67): warning C4100: 'samplesPerBlock': 参照されないパラメーター
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(208,24): warning C4244: '=': 'double' から 'Type' への変換です。データが失われる可能性があります。
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(208,24): warning C4244:         with
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(208,24): warning C4244:         [
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(208,24): warning C4244:             Type=float
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(208,24): warning C4244:         ]
+      C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(208,24):
+      テンプレートインスタンス化コンテキスト (最初に最も古いもの) は
+          C:\JUCE\projects\LPanner\Source\PluginProcessor.h(35,9):
+          コンパイル対象の関数 テンプレート インスタンス化 'void LPannerAudioProcessor::processBlockImpl<float>(juce::AudioBuffer<float> &,juce::MidiBuffer &)' のリファレンスを確認してください
+  
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(209,31): warning C4244: '=': 'double' から 'Type' への変換です。データが失われる可能性があります。
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(209,31): warning C4244:         with
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(209,31): warning C4244:         [
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(209,31): warning C4244:             Type=float
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(209,31): warning C4244:         ]
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(150,101): warning C4100: 'midiMessages': 参照されないパラメーター
+C:\JUCE\projects\LPanner\Source\PluginProcessor.cpp(185,14): warning C4189: 'sideInput': ローカル変数が初期化されましたが、参照されていません
+  LPanner_SharedCode.vcxproj -> C:\JUCE\projects\LPanner\Builds\VisualStudio2022\x64\Release\Shared Code\LPanner.lib

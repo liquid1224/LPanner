@@ -1,0 +1,84 @@
+.juce-slider-wrapper {
+  width: 100%;
+  padding: 0 40px;
+}
+
+.juce-slider-wrapper .ant-slider {
+  width: 100%;
+  padding: 0;
+}
+
+.juce-slider-wrapper .ant-slider-rail {
+  border-radius: 10px;
+  background-color: #575252;
+}
+
+.juce-slider-wrapper:hover .ant-slider-rail {
+  background-color: #575252;
+}
+
+.juce-slider-wrapper .ant-slider-track {
+  background-color: #9c3e3e !important;
+  border-radius: 10px;
+}
+
+.juce-slider-wrapper .ant-slider-dot {
+  inset-block-start: -7px !important;
+  width: 12px !important;
+  height: 12px !important;
+  box-shadow: none !important;
+  border: none !important;
+  background-color: var(--default-color) !important;
+}
+
+.juce-slider-wrapper .ant-slider-dot-active {
+  background-color: var(--accent-color) !important;
+}
+
+.juce-slider-wrapper .ant-slider-handle {
+  width: 80px !important;
+  height: 50px !important;
+  transform: translate(-50%, calc(-50% + 4px)) !important;
+  inset-block-start: 0px !important;
+}
+
+.juce-slider-wrapper .ant-slider-handle::before {
+  width: 100% !important;
+  height: 100% !important;
+  inset-inline-start: 0 !important;
+  inset-block-start: 0 !important;
+  background-color: #3e3737 !important;
+  border-radius: 25px;
+}
+
+.juce-slider-wrapper .ant-slider-handle::after {
+  width: 4px !important;
+  height: 100% !important;
+  inset-inline-start: calc(50% - 2px) !important;
+  inset-block-start: 0 !important;
+  background-color: #9c3e3e !important;
+  border-radius: 0 !important;
+  box-shadow: 0px 10px 10px -6px transparent !important;
+  outline: none !important;
+}
+
+.juce-slider-wrapper .ant-slider-handle:hover::after {
+  outline: none !important;
+  box-shadow: 0px 10px 10px -6px rgba(0, 0, 0, 0.3) !important;
+}
+
+.juce-slider-wrapper .juce-slider-input {
+  width: 120px;
+  font-family: inherit;
+  font-size: 24px;
+  border: none;
+  background-color: inherit;
+  text-align: center;
+  color: inherit;
+}
+
+.juce-slider-wrapper .juce-slider-input:focus {
+  border: none;
+  outline: none;
+  color: #575252;
+}
