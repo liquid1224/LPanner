@@ -28,16 +28,6 @@ public:
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
    #endif
 
-    template <typename T>
-    void processBlockImpl(juce::AudioBuffer<T>& buffer, juce::MidiBuffer& midiMessages);
-
-    void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) override {
-        processBlockImpl(buffer, midiMessages);
-    };
-    void processBlock(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages) override {
-        processBlockImpl(buffer, midiMessages);
-	};
-
 	bool supportsDoublePrecisionProcessing() const override { return true; }
 
     //==============================================================================
@@ -81,20 +71,31 @@ public:
     }
 
 private:
+    // Parameter Constants
+    static constexpr double SMOOTHING_TIME_MS = 10.0;
+	static constexpr double DELAY_SECONDS = 2.0;
+
     std::atomic<float>* stereo = parameters.getRawParameterValue("stereo");
     std::atomic<float>* stereoMode = parameters.getRawParameterValue("stereoMode");
     std::atomic<float>* delay = parameters.getRawParameterValue("delay");
     std::atomic<float>* rotation = parameters.getRawParameterValue("rotation");
 	std::atomic<float>* bypass = parameters.getRawParameterValue("bypass");
 
+	// Smoothed Parameters
 	juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> stereoSmoothed;
 	juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> stereoModeSmoothed;
 	juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> delaySmoothed;
 	juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> rotationSmoothed;
     juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> dryWetSmoothed;
 
+    // Delay Buffers
     juce::AudioBuffer<float> delayBufferF;
     juce::AudioBuffer<double> delayBufferD;
+    int writePosition = 0;
+
+    // Template Methods
+    template <typename T>
+    void processBlockImpl(juce::AudioBuffer<T>& buffer, juce::MidiBuffer& midiMessages);
 
     template<typename T>
     struct BufferSelector;
@@ -109,7 +110,10 @@ private:
         juce::AudioBuffer<double>& getDelayBuffer(LPannerAudioProcessor& p) { return p.delayBufferD; };
     };
 
-	int writePosition = 0;
+    // Helper Methods
+	void updateDelayBufferSize(double sampleRate);
+
+	
     int readPosition = 0;
 
     void updateParameters() {

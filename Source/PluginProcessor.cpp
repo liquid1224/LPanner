@@ -93,31 +93,39 @@ void LPannerAudioProcessor::changeProgramName (int index, const juce::String& ne
 //==============================================================================
 void LPannerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
-    double smoothingTime = 0.01;
-    stereoSmoothed.reset(sampleRate, smoothingTime);
+    juce::ignoreUnused(samplesPerBlock);
+
+    // Initialize smoothed parameters
+	const double smoothingTimeSeconds = SMOOTHING_TIME_MS / 1000.0;
+
+    stereoSmoothed.reset(sampleRate, smoothingTimeSeconds);
     stereoSmoothed.setCurrentAndTargetValue(*stereo);
 
-	delaySmoothed.reset(sampleRate, smoothingTime);
+	delaySmoothed.reset(sampleRate, smoothingTimeSeconds);
     delaySmoothed.setCurrentAndTargetValue(*delay);
 
-	rotationSmoothed.reset(sampleRate, smoothingTime);
+	rotationSmoothed.reset(sampleRate, smoothingTimeSeconds);
 	rotationSmoothed.setCurrentAndTargetValue(*rotation);
 
-	dryWetSmoothed.reset(sampleRate, smoothingTime);
+	dryWetSmoothed.reset(sampleRate, smoothingTimeSeconds);
     dryWetSmoothed.setCurrentAndTargetValue(*bypass ? 0.0f : 1.0f);
 
-	int delayBufferSize = static_cast<int>(sampleRate * 2.0);
-    delayBufferD.setSize(1, delayBufferSize);
-    delayBufferF.setSize(1, delayBufferSize);
+	updateDelayBufferSize(sampleRate);
     writePosition = 0;
 }
 
 void LPannerAudioProcessor::releaseResources()
 {
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
+	delayBufferF.setSize(0, 0);
+	delayBufferD.setSize(0, 0);
+}
+
+void LPannerAudioProcessor::updateDelayBufferSize(double sampleRate) {
+    const int delayBufferSize = static_cast<int>(sampleRate * DELAY_SECONDS);
+	delayBufferF.setSize(1, delayBufferSize);
+    delayBufferD.setSize(1, delayBufferSize);
+	delayBufferF.clear();
+    delayBufferD.clear();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -146,8 +154,15 @@ bool LPannerAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 }
 #endif
 
+void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) {
+    processBlockImpl(buffer, midiMessages);
+};
+void processBlock(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages) {
+    processBlockImpl(buffer, midiMessages);
+};
+
 template <typename T>
-inline void LPannerAudioProcessor::processBlockImpl(juce::AudioBuffer<T>& buffer, juce::MidiBuffer& midiMessages) {
+void LPannerAudioProcessor::processBlockImpl(juce::AudioBuffer<T>& buffer, juce::MidiBuffer& midiMessages) {
 	juce::ScopedNoDenormals noDenormals;
 	auto totalNumInputChannels = getTotalNumInputChannels();
 	auto totalNumOutputChannels = getTotalNumOutputChannels();
