@@ -1,6 +1,6 @@
 # LPanner VST3 Plugin
 
-**Version:** 1.0.1
+**Version:** 1.1.1
 **Developer:** liquid1224
 
 ![screenshot](/Readme.assets/screenshot.png)
@@ -111,6 +111,20 @@ MIT
 Create new issue for support, bug reports, or feature requests.
 
 ## Changelog
+
+### 1.1.1
+
+- Refactored front-end components
+  - Improved readability
+  - Reduced and optimized some processes
+  - Deleted some CSS files
+- Improved visualization of rotation slider
+
+### 1.1.0
+
+- Refactored `PluginProcessor.h` and `PluginProcessor.css`
+  - Improved readability
+  - Theoretically faster processing
 
 ### 1.0.1
 

@@ -2,27 +2,27 @@ import { useEffect, useState, type FC } from "react";
 import { Layout, Flex, Typography } from "antd";
 // @ts-expect-error Juce does not have types
 import { getNativeFunction } from "juce-framework-frontend";
-import "@fontsource/zen-dots/index.css";
+import "@fontsource/zen-dots/latin.css";
 import "./App.css";
 import JuceSwitcher from "./components/JuceSwitcher";
 import JuceSlider from "./components/JuceSlider";
 import JuceKnob from "./components/JuceKnob";
 import JuceBypassButton from "./components/JuceBypassButton";
 
-// デザインテーマの定数
+// Design theme
 const THEME = {
   colors: {
     background: "#9c7474",
     primary: "#3e3737",
-    accent: "#9c3e3e",
     secondary: "#575252",
+    accent: "#9c3e3e",
   },
   spacing: {
     container: "25px 40px",
   },
 } as const;
 
-// コンポーネントのスタイル定数
+// Component styles
 const STYLES = {
   title: {
     margin: "0",
@@ -49,7 +49,7 @@ const STYLES = {
 const App: FC = () => {
   const [isModern, setIsModern] = useState<boolean>(false);
 
-  // 初期化：Stereo Modeの状態を取得
+  // Get stereoMode state
   useEffect(() => {
     const initializeStereoMode = async () => {
       try {
@@ -66,7 +66,7 @@ const App: FC = () => {
     initializeStereoMode();
   }, []);
 
-  // スペースキー検出
+  // Detect Space key
   useEffect(() => {
     const pressSpaceKey = getNativeFunction("pressSpaceKey");
 
@@ -85,7 +85,7 @@ const App: FC = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // ズーム無効化
+  // Disable zoom
   useEffect(() => {
     const disableZoom = (e: WheelEvent) => {
       if (e.ctrlKey) {
@@ -109,54 +109,66 @@ const App: FC = () => {
     };
   }, []);
 
+  // Handle stereoMode change
   const handleStereoModeChange = (index: boolean) => {
     setIsModern(index);
   };
 
-  // ヘッダーセクション
+  // Header section
   const renderHeader = () => (
     <Flex align="center" gap="middle">
       <Typography.Title level={1} style={STYLES.title}>
         LPanner
       </Typography.Title>
       <Typography.Text style={STYLES.versionText}>
-        Ver 1.0.1 <br />
+        Ver 1.1.1 <br />
         by liquid1224
       </Typography.Text>
       <JuceBypassButton identifier="bypass" />
     </Flex>
   );
 
-  // Stereo Modeセクション
+  // Stereo Image header section
   const renderStereoSection = () => (
     <Flex justify="space-between" align="center" style={{ width: "100%" }}>
       <Flex gap="middle">
         <Typography.Title level={2} style={STYLES.subtitle}>
           Stereo Image:
         </Typography.Title>
-        <JuceSwitcher identifier="stereoMode" titles={["Classic", "Modern"]} level={2} style={STYLES.subtitle} className="stereo-selector-text" onChange={handleStereoModeChange} />
+        <JuceSwitcher identifier="stereoMode" titles={["Classic", "Modern"]} level={2} primaryColor={THEME.colors.primary} secondaryColor={THEME.colors.secondary} onChange={handleStereoModeChange} />
       </Flex>
       {isModern && (
         <Flex align="start">
           <Typography.Title level={3} style={STYLES.delayTitle}>
             Delay Time
           </Typography.Title>
-          <JuceKnob identifier="delay" min={1.0} max={20.0} defaultValue={5.0} defaultColor={THEME.colors.primary} accentColor={THEME.colors.accent} size={20} />
+          <JuceKnob identifier="delay" min={1.0} max={20.0} defaultValue={5.0} primaryColor={THEME.colors.primary} accentColor={THEME.colors.accent} size={20} />
         </Flex>
       )}
     </Flex>
   );
 
-  // Stereoスライダーセクション
-  const renderStereoSlider = () => <JuceSlider identifier="stereo" min={0} max={200} mark={0.5} defaultColor={THEME.colors.secondary} accentColor={THEME.colors.accent} />;
+  // Stereo Image slider section
+  const renderStereoSlider = () => (
+    <JuceSlider identifier="stereo" min={0} max={200} mark={0.5} primaryColor={THEME.colors.primary} secondaryColor={THEME.colors.secondary} accentColor={THEME.colors.accent} />
+  );
 
-  // Rotationセクション
+  // Rotation section
   const renderRotationSection = () => (
     <>
       <Typography.Title level={2} style={STYLES.subtitle}>
         Rotation
       </Typography.Title>
-      <JuceSlider identifier="rotation" min={-50} max={50} mark={0.5} defaultColor={THEME.colors.secondary} accentColor={THEME.colors.accent} />
+      <JuceSlider
+        identifier="rotation"
+        min={-50}
+        max={50}
+        mark={0.5}
+        primaryColor={THEME.colors.primary}
+        secondaryColor={THEME.colors.secondary}
+        accentColor={THEME.colors.accent}
+        centerOrigin={true}
+      />
     </>
   );
 
