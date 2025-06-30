@@ -1,3 +1,6 @@
+#root {
+  user-select: none;
+}
 body {
   margin: 0px;
 }

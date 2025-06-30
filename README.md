@@ -112,6 +112,16 @@ Create new issue for support, bug reports, or feature requests.
 
 ## Changelog
 
+### 1.1.2
+
+- Number display of delay knob can now accept numerical input
+
+- Support input parameters up to one decimal place
+  - Displayed value may be rounded to whole numbers
+- Added some transition animations to sliders and knobs
+
+- Replaced some hard coded values with variables
+
 ### 1.1.1
 
 - Refactored front-end components

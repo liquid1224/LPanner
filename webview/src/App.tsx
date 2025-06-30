@@ -3,11 +3,16 @@ import { Layout, Flex, Typography } from "antd";
 // @ts-expect-error Juce does not have types
 import { getNativeFunction } from "juce-framework-frontend";
 import "@fontsource/zen-dots/latin.css";
-import "./App.css";
 import JuceSwitcher from "./components/JuceSwitcher";
 import JuceSlider from "./components/JuceSlider";
 import JuceKnob from "./components/JuceKnob";
 import JuceBypassButton from "./components/JuceBypassButton";
+
+// Plugin info type
+interface PluginInfo {
+  name: string;
+  version: string;
+}
 
 // Design theme
 const THEME = {
@@ -24,6 +29,14 @@ const THEME = {
 
 // Component styles
 const STYLES = {
+  rootContainer: {
+    padding: THEME.spacing.container,
+    height: "100vh",
+    background: THEME.colors.background,
+  },
+  stereoSection: {
+    width: "100%",
+  },
   title: {
     margin: "0",
     fontWeight: "normal" as const,
@@ -44,10 +57,40 @@ const STYLES = {
     fontSize: "18px",
     color: THEME.colors.primary,
   },
+  delayMS: {
+    margin: "0 0 0 5px",
+    fontWeight: "normal" as const,
+    fontSize: "10px",
+    color: THEME.colors.primary,
+  },
 } as const;
 
 const App: FC = () => {
   const [isModern, setIsModern] = useState<boolean>(false);
+  const [pluginInfo, setPluginInfo] = useState<PluginInfo | null>(null);
+
+  // Get plugin info from C++
+  useEffect(() => {
+    const initializePluginInfo = async () => {
+      try {
+        const getPluginInfo = getNativeFunction("getPluginInfo");
+        const info = await getPluginInfo();
+        setPluginInfo({
+          name: info.name,
+          version: info.version,
+        });
+      } catch (error) {
+        console.error("Failed to get plugin info:", error);
+        // Fallback
+        setPluginInfo({
+          name: "LPanner",
+          version: "ERROR",
+        });
+      }
+    };
+
+    initializePluginInfo();
+  }, []);
 
   // Get stereoMode state
   useEffect(() => {
@@ -118,10 +161,10 @@ const App: FC = () => {
   const renderHeader = () => (
     <Flex align="center" gap="middle">
       <Typography.Title level={1} style={STYLES.title}>
-        LPanner
+        {pluginInfo?.name}
       </Typography.Title>
       <Typography.Text style={STYLES.versionText}>
-        Ver 1.1.1 <br />
+        Ver {pluginInfo?.version} <br />
         by liquid1224
       </Typography.Text>
       <JuceBypassButton identifier="bypass" />
@@ -130,7 +173,7 @@ const App: FC = () => {
 
   // Stereo Image header section
   const renderStereoSection = () => (
-    <Flex justify="space-between" align="center" style={{ width: "100%" }}>
+    <Flex justify="space-between" align="center" style={STYLES.stereoSection}>
       <Flex gap="middle">
         <Typography.Title level={2} style={STYLES.subtitle}>
           Stereo Image:
@@ -138,11 +181,26 @@ const App: FC = () => {
         <JuceSwitcher identifier="stereoMode" titles={["Classic", "Modern"]} level={2} primaryColor={THEME.colors.primary} secondaryColor={THEME.colors.secondary} onChange={handleStereoModeChange} />
       </Flex>
       {isModern && (
-        <Flex align="start">
-          <Typography.Title level={3} style={STYLES.delayTitle}>
-            Delay Time
-          </Typography.Title>
-          <JuceKnob identifier="delay" min={1.0} max={20.0} defaultValue={5.0} primaryColor={THEME.colors.primary} accentColor={THEME.colors.accent} size={20} />
+        <Flex align="center">
+          <Flex align="end">
+            <Typography.Title level={3} style={STYLES.delayTitle}>
+              Delay
+            </Typography.Title>
+            <Typography.Title level={4} style={STYLES.delayMS}>
+              {"[ms]"}
+            </Typography.Title>
+          </Flex>
+
+          <JuceKnob
+            identifier="delay"
+            min={1.0}
+            max={20.0}
+            defaultValue={5.0}
+            primaryColor={THEME.colors.primary}
+            secondaryColor={THEME.colors.secondary}
+            accentColor={THEME.colors.accent}
+            size={20}
+          />
         </Flex>
       )}
     </Flex>
@@ -174,17 +232,7 @@ const App: FC = () => {
 
   return (
     <Layout className="root">
-      <Flex
-        vertical
-        gap="middle"
-        justify="space-between"
-        align="start"
-        style={{
-          padding: THEME.spacing.container,
-          height: "100vh",
-          background: THEME.colors.background,
-        }}
-      >
+      <Flex vertical gap="middle" justify="space-between" align="start" style={STYLES.rootContainer}>
         {renderHeader()}
         {renderStereoSection()}
         {renderStereoSlider()}

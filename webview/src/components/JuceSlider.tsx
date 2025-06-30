@@ -70,6 +70,11 @@ const SliderWrapper = styled(Flex)<SliderWrapperProps>`
     transform: translate(-50%, calc(-50% + 4px)) !important;
     inset-block-start: 0;
     z-index: 2;
+    transition: left 0.1s ease-out;
+  }
+
+  && .ant-slider:active .ant-slider-handle {
+    transition: none;
   }
 
   && .ant-slider-handle::before {
@@ -98,7 +103,7 @@ const SliderWrapper = styled(Flex)<SliderWrapperProps>`
   }
 `;
 
-// Style for input field
+// Styled input field
 const SliderInput = styled.input<{ $primaryColor: string; $secondaryColor: string }>`
   width: 120px;
   font-family: inherit;
@@ -114,7 +119,7 @@ const SliderInput = styled.input<{ $primaryColor: string; $secondaryColor: strin
   }
 `;
 
-// Style for centerOrigin custom track
+// Styled centerOrigin custom track
 const CustomTrack = styled.div<CustomTrackProps>`
   position: absolute;
   top: 2px;
@@ -277,7 +282,7 @@ const JuceSlider: FC<JuceSliderProps> = ({ identifier, isVertical = false, min =
         {centerOrigin && <CustomTrack {...getCustomTrackProps()} />}
 
         {/* Ant Design Slider component */}
-        <Slider className="juce-slider" vertical={isVertical} min={0} max={1} step={0.005} value={normalizedValue} marks={{ [mark]: " " }} onChange={handleSliderChange} tooltip={{ open: false }} />
+        <Slider className="juce-slider" vertical={isVertical} min={0} max={1} step={0.0001} value={normalizedValue} marks={{ [mark]: " " }} onChange={handleSliderChange} tooltip={{ open: false }} />
       </SliderContainer>
 
       {/* Value input field */}

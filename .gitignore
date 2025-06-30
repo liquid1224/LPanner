@@ -50,6 +50,7 @@
 assets.zip
 JuceLibraryCode
 Builds
+*.filtergraph
 
 # Node
 ## Logs

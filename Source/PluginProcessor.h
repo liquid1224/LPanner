@@ -62,10 +62,10 @@ public:
 		nullptr,
 		juce::Identifier("PARAMETERS"),
 		{
-			std::make_unique<juce::AudioParameterFloat>("stereo", "stereo", juce::NormalisableRange<float>(0.0f, 200.0f, 1.0f, 1), 100.0f),
+			std::make_unique<juce::AudioParameterFloat>("stereo", "stereo", juce::NormalisableRange<float>(0.0f, 200.0f, 0.1f, 1), 100.0f),
 			std::make_unique<juce::AudioParameterChoice>("stereoMode", "stereoMode", juce::StringArray("classic", "modern"), 1),
-			std::make_unique<juce::AudioParameterFloat>("delay", "delay", juce::NormalisableRange<float>(1.0f, 20.0f, 1.0f, 1), 5.0f),
-			std::make_unique<juce::AudioParameterFloat>("rotation", "rotation", juce::NormalisableRange<float>(-50.0f,50.0f, 1.0f, 1), 0.0f),
+			std::make_unique<juce::AudioParameterFloat>("delay", "delay", juce::NormalisableRange<float>(1.0f, 20.0f, 0.1f, 1), 5.0f),
+			std::make_unique<juce::AudioParameterFloat>("rotation", "rotation", juce::NormalisableRange<float>(-50.0f,50.0f, 0.1f, 1), 0.0f),
 			std::make_unique<juce::AudioParameterBool>("bypass", "bypass", false),
 		}
 	};

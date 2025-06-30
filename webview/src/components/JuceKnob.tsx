@@ -1,7 +1,8 @@
-import React, { type FC, useEffect, useState, useCallback, useMemo, type CSSProperties } from "react";
+import React, { type FC, useEffect, useState, useCallback, useMemo, useRef, type CSSProperties } from "react";
 // @ts-expect-error Juce does not have types
 import { getSliderState } from "juce-framework-frontend";
 import { Flex } from "antd";
+import styled from "styled-components";
 
 interface JuceKnobProps {
   identifier: string;
@@ -11,10 +12,27 @@ interface JuceKnobProps {
   size?: number;
   sensitivity?: number;
   primaryColor: string;
+  secondaryColor: string;
   accentColor: string;
 }
 
-const JuceKnob: FC<JuceKnobProps> = ({ identifier, min = 0.0, max = 1.0, defaultValue = 0.5, size = 60, sensitivity = 0.5, primaryColor, accentColor }) => {
+// Styled input field
+const KnobInput = styled.input<{ $primaryColor: string; $secondaryColor: string }>`
+  width: 30px;
+  font-family: inherit;
+  font-size: 10px;
+  border: none;
+  background-color: inherit;
+  text-align: center;
+  color: ${(props) => props.$primaryColor};
+  &:focus {
+    border: none;
+    outline: none;
+    color: ${(props) => props.$secondaryColor};
+  }
+`;
+
+const JuceKnob: FC<JuceKnobProps> = ({ identifier, min = 0.0, max = 1.0, defaultValue = 0.5, size = 60, sensitivity = 0.5, primaryColor, secondaryColor, accentColor }) => {
   // Get JUCE slider state
   const sliderState = getSliderState(identifier);
 
@@ -23,6 +41,9 @@ const JuceKnob: FC<JuceKnobProps> = ({ identifier, min = 0.0, max = 1.0, default
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartY, setDragStartY] = useState(0);
   const [dragStartValue, setDragStartValue] = useState(0);
+  const [inputValue, setInputValue] = useState("");
+  const [lastValidInput, setLastValidInput] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Calculate actual value from normalized value to min ~ max range
   const range = max - min;
@@ -30,6 +51,28 @@ const JuceKnob: FC<JuceKnobProps> = ({ identifier, min = 0.0, max = 1.0, default
 
   // Calculate knob rotation angle（-135deg ~ +135deg）
   const rotationAngle = (normalizedValue - 0.5) * 270;
+
+  // Format number to string and delete leading zeros
+  const formatValue = (value: number): string => {
+    return value.toFixed(1).replace(/^0+(\d)/, "$1");
+  };
+
+  // Convert string to normalized number
+  const valueToNormalized = (value: number): number => {
+    return (value - min) / range;
+  };
+
+  // Clamp number in range
+  const clampValue = (value: number): number => {
+    return Math.max(min, Math.min(max, value));
+  };
+
+  // Check if input is valid
+  const isNumericInput = (input: string): boolean => {
+    if (input === "" || !/^-?\d*\.?\d*$/.test(input)) return false;
+    const parsed = parseFloat(input);
+    return !isNaN(parsed);
+  };
 
   // Sync with JUCE state changes
   useEffect(() => {
@@ -43,6 +86,13 @@ const JuceKnob: FC<JuceKnobProps> = ({ identifier, min = 0.0, max = 1.0, default
     // Cleanup listener on unmount
     return () => sliderState.valueChangedEvent.removeListener(listenerId);
   }, [sliderState]);
+
+  // Update input field when normalized value changes
+  useEffect(() => {
+    const formatted = formatValue(actualValue);
+    setInputValue(formatted);
+    setLastValidInput(formatted);
+  }, [actualValue]);
 
   // Update JUCE parameter value with clamping to valid range
   const updateJuceValue = (normalized: number) => {
@@ -78,7 +128,7 @@ const JuceKnob: FC<JuceKnobProps> = ({ identifier, min = 0.0, max = 1.0, default
 
       updateJuceValue(newValue);
     },
-    [isDragging, dragStartY, dragStartValue, updateJuceValue]
+    [isDragging, dragStartY, dragStartValue, sensitivity, updateJuceValue]
   );
 
   // Handle mouse up event to end dragging
@@ -90,13 +140,52 @@ const JuceKnob: FC<JuceKnobProps> = ({ identifier, min = 0.0, max = 1.0, default
   }, [isDragging]);
 
   // Handle double click to reset default value
-  const handleDoubleClick = () =>
-    useCallback(() => {
-      {
-        const normalizedDefault = (defaultValue - min) / range;
-        updateJuceValue(normalizedDefault);
-      }
-    }, [updateJuceValue]);
+  const handleDoubleClick = useCallback(() => {
+    const normalizedDefault = (defaultValue - min) / range;
+    updateJuceValue(normalizedDefault);
+  }, [defaultValue, min, range, updateJuceValue]);
+
+  // Handle input field text change
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+
+    // Update lastValidInput if current input is numeric
+    if (isNumericInput(value)) {
+      const parsedValue = parseFloat(value);
+      const clampedValue = clampValue(parsedValue);
+      setLastValidInput(formatValue(clampedValue));
+    }
+  };
+
+  // Confirm and apply input value changes
+  const confirmInput = () => {
+    if (isNumericInput(inputValue)) {
+      const parsedValue = parseFloat(inputValue);
+      const clampedValue = clampValue(parsedValue);
+      const formatted = formatValue(clampedValue);
+
+      setInputValue(formatted);
+      setLastValidInput(formatted);
+      updateJuceValue(valueToNormalized(clampedValue));
+    } else {
+      // Revert to last valid number if current input is invalid
+      setInputValue(lastValidInput);
+    }
+  };
+
+  // Handle Enter input
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      confirmInput();
+      inputRef.current?.blur();
+    }
+  };
+
+  // Handle input field focus to select all text
+  const handleInputFocus = () => {
+    inputRef.current?.select();
+  };
 
   // Global mouse event management for dragging
   useEffect(() => {
@@ -161,13 +250,6 @@ const JuceKnob: FC<JuceKnobProps> = ({ identifier, min = 0.0, max = 1.0, default
         borderRadius: "2px",
         transform: "translateX(-50%)",
       } as CSSProperties,
-
-      valueDisplay: {
-        width: "20px",
-        fontSize: "10px",
-        color: primaryColor,
-        marginTop: "2px",
-      },
     }),
     [size, primaryColor, accentColor, rotationAngle, isDragging]
   );
@@ -178,7 +260,17 @@ const JuceKnob: FC<JuceKnobProps> = ({ identifier, min = 0.0, max = 1.0, default
         <div style={styles.indicator} />
       </div>
 
-      <div style={styles.valueDisplay}>{actualValue.toFixed(0)}</div>
+      <KnobInput
+        ref={inputRef}
+        type="text"
+        value={inputValue}
+        $primaryColor={primaryColor}
+        $secondaryColor={secondaryColor}
+        onChange={handleInputChange}
+        onKeyDown={handleInputKeyDown}
+        onBlur={confirmInput}
+        onFocus={handleInputFocus}
+      />
     </Flex>
   );
 };

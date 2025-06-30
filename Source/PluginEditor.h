@@ -54,7 +54,17 @@ private:
 	juce::WebSliderRelay rotationRelay{ "rotation" };
 	juce::WebToggleButtonRelay bypassRelay{ "bypass" };
 
-	//===============================================================================
+	//==============================================================================
+	juce::var pluginInfo = [this]() {
+		juce::var pluginName = ProjectInfo::projectName;
+		juce::var pluginVersion = ProjectInfo::versionString;
+
+		auto* obj = new juce::DynamicObject();
+		obj->setProperty("name", pluginName);
+		obj->setProperty("version", pluginVersion);
+		return juce::var(obj);
+	}();
+
 	SinglePageBrowser webComponent{
 		juce::WebBrowserComponent::Options{}
 			.withBackend(juce::WebBrowserComponent::Options::Backend::webview2)
@@ -68,6 +78,10 @@ private:
 			.withOptionsFrom(rotationRelay)
 			.withOptionsFrom(bypassRelay)
 			.withOptionsFrom(controlParameterIndexReceiver)
+			.withNativeFunction("getPluginInfo",
+				[this](auto&, auto complete) {
+					complete(pluginInfo);
+				})
 			.withNativeFunction("pressSpaceKey",
 				[this](auto& var, auto complete) {
 					DBG("pressSpaceKey");
@@ -85,10 +99,11 @@ private:
 					SendInput(1, &input, sizeof(INPUT));
 
 					complete({});
-			})
+				})
 			.withResourceProvider(
 				[this](const auto& url) { return getResource(url); },
-				juce::URL{"http://localhost:5173/"}.getOrigin()) };
+				juce::URL{"http://localhost:5173/"}.getOrigin()) 
+	};
 
 	std::optional<juce::WebBrowserComponent::Resource> getResource(const juce::String& url);
 
