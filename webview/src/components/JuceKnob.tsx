@@ -18,7 +18,7 @@ interface JuceKnobProps {
 
 // Styled input field
 const KnobInput = styled.input<{ $primaryColor: string; $secondaryColor: string }>`
-  width: 30px;
+  width: 40px;
   font-family: inherit;
   font-size: 10px;
   border: none;

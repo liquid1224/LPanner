@@ -1,6 +1,6 @@
 # LPanner VST3 Plugin
 
-**Version:** 1.1.2
+**Version:** 1.1.2b 
 **Developer:** liquid1224
 
 ![screenshot](/Readme.assets/screenshot.png)
@@ -111,6 +111,10 @@ MIT
 Create new issue for support, bug reports, or feature requests.
 
 ## Changelog
+
+### 1.1.2b
+
+- Fixed some layouts
 
 ### 1.1.2
 
