@@ -1,6 +1,6 @@
 # LPanner VST3 Plugin
 
-**Version:** 1.1.1
+**Version:** 1.1.2
 **Developer:** liquid1224
 
 ![screenshot](/Readme.assets/screenshot.png)
