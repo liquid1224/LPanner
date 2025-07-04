@@ -6,16 +6,15 @@ import { FaPowerOff } from "react-icons/fa";
 interface JuceBypassButtonProps {
   identifier: string;
   hoverLockDuration?: number;
+  style: React.CSSProperties;
 }
 
-const JuceBypassButton: FC<JuceBypassButtonProps> = ({ identifier, hoverLockDuration = 500 }) => {
+const JuceBypassButton: FC<JuceBypassButtonProps> = ({ identifier, hoverLockDuration = 500, style }) => {
   const toggleState = getToggleState(identifier);
   const [value, setValue] = useState(toggleState.getValue());
   const [isHovered, setIsHovered] = useState(false);
   const [isHoverLocked, setIsHoverLocked] = useState(false);
   const isMouseOverRef = useRef(false);
-
-  // bypass=false(index=0)のとき通常色、bypass=true(index=1)のときアクティブ色
   const isBypassed = value === true;
 
   useEffect(() => {
@@ -81,6 +80,7 @@ const JuceBypassButton: FC<JuceBypassButtonProps> = ({ identifier, hoverLockDura
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        ...style,
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

@@ -4,6 +4,15 @@ import { getSliderState } from "juce-framework-frontend";
 import { Flex } from "antd";
 import styled from "styled-components";
 
+// Constants
+const KNOB_ROTATION_RANGE = 270;
+const DEFAULT_SIZE = 60;
+const DEFAULT_SENSITIVITY = 0.005;
+const CTRL_SENSITIVITY_FACTOR = 0.1;
+const INDICATOR_HEIGHT_RATIO = 0.4;
+const INDICATOR_WIDTH = 2;
+
+// Types
 interface JuceKnobProps {
   identifier: string;
   min?: number;
@@ -14,17 +23,40 @@ interface JuceKnobProps {
   primaryColor: string;
   secondaryColor: string;
   accentColor: string;
+  disabled?: boolean;
+  title?: string;
+  suffix?: string;
 }
 
-// Styled input field
-const KnobInput = styled.input<{ $primaryColor: string; $secondaryColor: string }>`
+interface DragState {
+  isDragging: boolean;
+  startY: number;
+  startValue: number;
+}
+
+// Styled Components
+const KnobTitle = styled.div<{ $primaryColor: string }>`
+  margin: 0;
+  font-weight: normal;
+  font-size: 18px;
+  color: ${(props) => props.$primaryColor};
+`;
+
+const KnobInput = styled.input<{
+  $primaryColor: string;
+  $secondaryColor: string;
+  $disabled?: boolean;
+}>`
   width: 40px;
   font-family: inherit;
   font-size: 10px;
+  margin-top: 3px;
   border: none;
   background-color: inherit;
   text-align: center;
   color: ${(props) => props.$primaryColor};
+  pointer-events: ${(props) => (props.$disabled ? "none" : "auto")};
+
   &:focus {
     border: none;
     outline: none;
@@ -32,47 +64,199 @@ const KnobInput = styled.input<{ $primaryColor: string; $secondaryColor: string 
   }
 `;
 
-const JuceKnob: FC<JuceKnobProps> = ({ identifier, min = 0.0, max = 1.0, defaultValue = 0.5, size = 60, sensitivity = 0.5, primaryColor, secondaryColor, accentColor }) => {
-  // Get JUCE slider state
-  const sliderState = getSliderState(identifier);
+const KnobSuffix = styled.div<{ $primaryColor: string }>`
+  font-weight: normal;
+  font-size: 10px;
+  margin-top: 3px;
+  color: ${(props) => props.$primaryColor};
+`;
 
-  // Component states
-  const [normalizedValue, setNormalizedValue] = useState(sliderState.getNormalisedValue());
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStartY, setDragStartY] = useState(0);
-  const [dragStartValue, setDragStartValue] = useState(0);
+const KnobContainer = styled.div<{
+  $size: number;
+  $primaryColor: string;
+  $isDragging: boolean;
+}>`
+  width: ${(props) => props.$size}px;
+  height: ${(props) => props.$size}px;
+  border-radius: 50%;
+  background-color: ${(props) => props.$primaryColor};
+  border: 2px solid ${(props) => props.$primaryColor};
+  position: relative;
+  cursor: ${(props) => (props.$isDragging ? "none" : "grab")};
+  user-select: none;
+`;
+
+const KnobIndicator = styled.div<{ $accentColor: string }>`
+  position: absolute;
+  top: "10%";
+  left: 50%;
+  width: ${INDICATOR_WIDTH}px;
+  height: ${INDICATOR_HEIGHT_RATIO * 100}%;
+  background-color: ${(props) => props.$accentColor};
+  border-radius: 2px;
+  transform: translateX(-50%);
+`;
+
+// Custom Hooks
+const useDragState = () => {
+  const [dragState, setDragState] = useState<DragState>({
+    isDragging: false,
+    startY: 0,
+    startValue: 0,
+  });
+
+  const startDrag = useCallback((clientY: number, currentValue: number) => {
+    setDragState({
+      isDragging: true,
+      startY: clientY,
+      startValue: currentValue,
+    });
+  }, []);
+
+  const endDrag = useCallback(() => {
+    setDragState((prev) => ({ ...prev, isDragging: false }));
+  }, []);
+
+  // Ctrlキーの状態変化時に基準値を再設定するための関数
+  const updateDragBase = useCallback((currentY: number, currentValue: number) => {
+    setDragState((prev) => ({
+      ...prev,
+      startY: currentY,
+      startValue: currentValue,
+    }));
+  }, []);
+
+  return { dragState, startDrag, endDrag, updateDragBase };
+};
+
+const useCtrlKeyDetection = () => {
+  const [isCtrlPressed, setIsCtrlPressed] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && !isCtrlPressed) {
+        setIsCtrlPressed(true);
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (!e.ctrlKey && isCtrlPressed) {
+        setIsCtrlPressed(false);
+      }
+    };
+
+    // Handle window focus/blur to reset ctrl state
+    const handleWindowBlur = () => {
+      setIsCtrlPressed(false);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("blur", handleWindowBlur);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("blur", handleWindowBlur);
+    };
+  }, [isCtrlPressed]);
+
+  return isCtrlPressed;
+};
+
+const useInputState = (actualValue: number) => {
   const [inputValue, setInputValue] = useState("");
   const [lastValidInput, setLastValidInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Calculate actual value from normalized value to min ~ max range
-  const range = max - min;
-  const actualValue = normalizedValue * range + min;
-
-  // Calculate knob rotation angle（-135deg ~ +135deg）
-  const rotationAngle = (normalizedValue - 0.5) * 270;
-
-  // Format number to string and delete leading zeros
-  const formatValue = (value: number): string => {
+  const formatValue = useCallback((value: number): string => {
     return value.toFixed(1).replace(/^0+(\d)/, "$1");
-  };
+  }, []);
 
-  // Convert string to normalized number
-  const valueToNormalized = (value: number): number => {
-    return (value - min) / range;
-  };
+  // Update input when actual value changes
+  useEffect(() => {
+    const formatted = formatValue(actualValue);
+    setInputValue(formatted);
+    setLastValidInput(formatted);
+  }, [actualValue, formatValue]);
 
-  // Clamp number in range
-  const clampValue = (value: number): number => {
-    return Math.max(min, Math.min(max, value));
+  return {
+    inputValue,
+    setInputValue,
+    lastValidInput,
+    setLastValidInput,
+    inputRef,
+    formatValue,
   };
+};
 
-  // Check if input is valid
-  const isNumericInput = (input: string): boolean => {
-    if (input === "" || !/^-?\d*\.?\d*$/.test(input)) return false;
-    const parsed = parseFloat(input);
-    return !isNaN(parsed);
-  };
+// Utility functions
+const clampValue = (value: number, min: number, max: number): number => {
+  return Math.max(min, Math.min(max, value));
+};
+
+const isValidNumericInput = (input: string): boolean => {
+  if (input === "" || !/^-?\d*\.?\d*$/.test(input)) return false;
+  const parsed = parseFloat(input);
+  return !isNaN(parsed);
+};
+
+const normalizeValue = (value: number, min: number, max: number): number => {
+  return (value - min) / (max - min);
+};
+
+const denormalizeValue = (normalized: number, min: number, max: number): number => {
+  return normalized * (max - min) + min;
+};
+
+const calculateRotationAngle = (normalizedValue: number): number => {
+  return (normalizedValue - 0.5) * KNOB_ROTATION_RANGE;
+};
+
+// Main Component
+const JuceKnob: FC<JuceKnobProps> = ({
+  identifier,
+  min = 0.0,
+  max = 1.0,
+  defaultValue = 0.5,
+  size = DEFAULT_SIZE,
+  sensitivity = DEFAULT_SENSITIVITY,
+  primaryColor,
+  secondaryColor,
+  accentColor,
+  disabled = false,
+  title,
+  suffix,
+}) => {
+  // JUCE state
+  const sliderState = useMemo(() => getSliderState(identifier), [identifier]);
+  const [normalizedValue, setNormalizedValue] = useState(() => sliderState.getNormalisedValue());
+
+  // Custom hooks
+  const { dragState, startDrag, endDrag, updateDragBase } = useDragState();
+  const isCtrlPressed = useCtrlKeyDetection();
+  const actualValue = useMemo(() => denormalizeValue(normalizedValue, min, max), [normalizedValue, min, max]);
+
+  const { inputValue, setInputValue, lastValidInput, setLastValidInput, inputRef, formatValue } = useInputState(actualValue);
+
+  // Ctrlキーの前回の状態を記録
+  const prevCtrlPressedRef = useRef(isCtrlPressed);
+  const lastMouseYRef = useRef(0);
+
+  // Calculated values
+  const rotationAngle = useMemo(() => calculateRotationAngle(normalizedValue), [normalizedValue]);
+  const effectiveSensitivity = useMemo(() => {
+    return isCtrlPressed ? sensitivity * CTRL_SENSITIVITY_FACTOR : sensitivity;
+  }, [sensitivity, isCtrlPressed]);
+
+  // JUCE integration
+  const updateJuceValue = useCallback(
+    (normalized: number) => {
+      const clampedValue = clampValue(normalized, 0, 1);
+      sliderState.setNormalisedValue(clampedValue);
+    },
+    [sliderState]
+  );
 
   // Sync with JUCE state changes
   useEffect(() => {
@@ -80,197 +264,158 @@ const JuceKnob: FC<JuceKnobProps> = ({ identifier, min = 0.0, max = 1.0, default
       setNormalizedValue(sliderState.getNormalisedValue());
     };
 
-    // Subscribe to JUCE value change event
     const listenerId = sliderState.valueChangedEvent.addListener(handleStateChange);
-
-    // Cleanup listener on unmount
     return () => sliderState.valueChangedEvent.removeListener(listenerId);
   }, [sliderState]);
 
-  // Update input field when normalized value changes
+  // Ctrlキーの状態変化を監視し、ドラッグ中であれば基準値を更新
   useEffect(() => {
-    const formatted = formatValue(actualValue);
-    setInputValue(formatted);
-    setLastValidInput(formatted);
-  }, [actualValue]);
+    if (dragState.isDragging && prevCtrlPressedRef.current !== isCtrlPressed) {
+      updateDragBase(lastMouseYRef.current, normalizedValue);
+    }
+    prevCtrlPressedRef.current = isCtrlPressed;
+  }, [isCtrlPressed, dragState.isDragging, normalizedValue, updateDragBase]);
 
-  // Update JUCE parameter value with clamping to valid range
-  const updateJuceValue = (normalized: number) => {
-    const clampedValue = Math.max(0, Math.min(1, normalized));
-    sliderState.setNormalisedValue(clampedValue);
-  };
-
-  // Handle mouse down event to start dragging
+  // Mouse drag handlers
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
+      if (disabled) return;
+
       e.preventDefault();
-
-      setIsDragging(true);
-      setDragStartY(e.clientY);
-      setDragStartValue(normalizedValue);
-
-      // Hide cursor during dragging
-      document.body.style.cursor = "none";
+      startDrag(e.clientY, normalizedValue);
+      lastMouseYRef.current = e.clientY;
     },
-    [normalizedValue]
+    [disabled, startDrag, normalizedValue]
   );
 
-  // Handle mouse move event to change parameter value and rotation angle
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      if (!isDragging) return;
+      if (!dragState.isDragging || disabled) return;
 
       e.preventDefault();
+      lastMouseYRef.current = e.clientY;
 
-      const deltaY = dragStartY - e.clientY;
-      const valueChange = deltaY * sensitivity * 0.01;
-      const newValue = dragStartValue + valueChange;
+      const deltaY = dragState.startY - e.clientY;
+      const valueChange = deltaY * effectiveSensitivity;
+      const newValue = dragState.startValue + valueChange;
 
       updateJuceValue(newValue);
     },
-    [isDragging, dragStartY, dragStartValue, sensitivity, updateJuceValue]
+    [dragState, effectiveSensitivity, updateJuceValue, disabled]
   );
 
-  // Handle mouse up event to end dragging
   const handleMouseUp = useCallback(() => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    // Show cursor
-    document.body.style.cursor = "";
-  }, [isDragging]);
+    if (!dragState.isDragging) return;
+    endDrag();
+  }, [dragState.isDragging, endDrag]);
 
-  // Handle double click to reset default value
   const handleDoubleClick = useCallback(() => {
-    const normalizedDefault = (defaultValue - min) / range;
+    if (disabled) return;
+
+    const normalizedDefault = normalizeValue(defaultValue, min, max);
     updateJuceValue(normalizedDefault);
-  }, [defaultValue, min, range, updateJuceValue]);
+  }, [disabled, defaultValue, min, max, updateJuceValue]);
 
-  // Handle input field text change
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setInputValue(value);
+  // Input handlers
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setInputValue(value);
 
-    // Update lastValidInput if current input is numeric
-    if (isNumericInput(value)) {
-      const parsedValue = parseFloat(value);
-      const clampedValue = clampValue(parsedValue);
-      setLastValidInput(formatValue(clampedValue));
-    }
-  };
+      if (isValidNumericInput(value)) {
+        const parsedValue = parseFloat(value);
+        const clampedValue = clampValue(parsedValue, min, max);
+        setLastValidInput(formatValue(clampedValue));
+      }
+    },
+    [min, max, formatValue, setInputValue, setLastValidInput]
+  );
 
-  // Confirm and apply input value changes
-  const confirmInput = () => {
-    if (isNumericInput(inputValue)) {
+  const confirmInput = useCallback(() => {
+    if (isValidNumericInput(inputValue)) {
       const parsedValue = parseFloat(inputValue);
-      const clampedValue = clampValue(parsedValue);
+      const clampedValue = clampValue(parsedValue, min, max);
       const formatted = formatValue(clampedValue);
 
       setInputValue(formatted);
       setLastValidInput(formatted);
-      updateJuceValue(valueToNormalized(clampedValue));
+      updateJuceValue(normalizeValue(clampedValue, min, max));
     } else {
-      // Revert to last valid number if current input is invalid
       setInputValue(lastValidInput);
     }
-  };
+  }, [inputValue, min, max, formatValue, lastValidInput, updateJuceValue, setInputValue, setLastValidInput]);
 
-  // Handle Enter input
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      confirmInput();
-      inputRef.current?.blur();
-    }
-  };
+  const handleInputKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        confirmInput();
+        inputRef.current?.blur();
+      }
+    },
+    [confirmInput]
+  );
 
-  // Handle input field focus to select all text
-  const handleInputFocus = () => {
+  const handleInputFocus = useCallback(() => {
     inputRef.current?.select();
-  };
+  }, []);
 
-  // Global mouse event management for dragging
+  // Global mouse events for dragging
   useEffect(() => {
-    if (isDragging) {
+    if (dragState.isDragging) {
+      document.body.style.setProperty("cursor", "none", "important");
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
 
       return () => {
+        document.body.style.removeProperty("cursor");
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
       };
     }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [dragState.isDragging, handleMouseMove, handleMouseUp]);
 
-  // Cleanup cursor style on component unmount
-  useEffect(() => {
-    return () => {
-      document.body.style.cursor = "";
-    };
-  }, []);
-
-  // Memoized styles
-  const styles = useMemo(
+  // Styles
+  const knobStyle: CSSProperties = useMemo(
     () => ({
-      wrapper: {
-        padding: "0 10px",
-        ...(isDragging && {
-          cursor: "none !important" as const,
-          "& *": {
-            cursor: "none !important" as const,
-          },
-        }),
-      } as CSSProperties,
-
-      knob: {
-        width: `${size}px`,
-        height: `${size}px`,
-        borderRadius: "50%",
-        backgroundColor: primaryColor,
-        border: `2px solid ${primaryColor}`,
-        position: "relative" as const,
-        cursor: isDragging ? "none" : "pointer",
-        userSelect: "none",
-        transform: `rotate(${rotationAngle}deg)`,
-        transition: isDragging ? "none" : "transform 0.1s ease-out",
-
-        "&:hover": {
-          opacity: 0.9,
-        },
-        "&:active": {
-          opacity: 0.8,
-        },
-      } as CSSProperties,
-
-      indicator: {
-        position: "absolute",
-        top: "10%",
-        left: "50%",
-        width: "2px",
-        height: "40%",
-        backgroundColor: accentColor,
-        borderRadius: "2px",
-        transform: "translateX(-50%)",
-      } as CSSProperties,
+      transform: `rotate(${rotationAngle}deg)`,
+      transition: dragState.isDragging ? "none" : "transform 0.1s ease-out",
     }),
-    [size, primaryColor, accentColor, rotationAngle, isDragging]
+    [rotationAngle, dragState.isDragging]
+  );
+
+  const wrapperStyle: CSSProperties = useMemo(
+    () => ({
+      padding: "0 0 0 15px",
+      alignItems: "center",
+    }),
+    []
   );
 
   return (
-    <Flex justify="center" align="center" gap="small" style={styles.wrapper}>
-      <div style={styles.knob} onMouseDown={handleMouseDown} onDoubleClick={handleDoubleClick}>
-        <div style={styles.indicator} />
-      </div>
+    <Flex align="center" style={{ opacity: disabled ? 0 : 1, transition: "opacity 0.1s ease-out" }}>
+      <Flex align="end">
+        <KnobTitle $primaryColor={primaryColor}>{title}</KnobTitle>
+      </Flex>
 
-      <KnobInput
-        ref={inputRef}
-        type="text"
-        value={inputValue}
-        $primaryColor={primaryColor}
-        $secondaryColor={secondaryColor}
-        onChange={handleInputChange}
-        onKeyDown={handleInputKeyDown}
-        onBlur={confirmInput}
-        onFocus={handleInputFocus}
-      />
+      <Flex justify="center" align="center" gap={2} style={wrapperStyle}>
+        <KnobContainer $size={size} $primaryColor={primaryColor} $isDragging={dragState.isDragging} style={knobStyle} onMouseDown={handleMouseDown} onDoubleClick={handleDoubleClick}>
+          <KnobIndicator $accentColor={accentColor} />
+        </KnobContainer>
+
+        <KnobInput
+          ref={inputRef}
+          value={inputValue}
+          $primaryColor={primaryColor}
+          $secondaryColor={secondaryColor}
+          $disabled={disabled}
+          onChange={handleInputChange}
+          onKeyDown={handleInputKeyDown}
+          onBlur={confirmInput}
+          onFocus={handleInputFocus}
+          disabled={disabled}
+        />
+        <KnobSuffix $primaryColor={primaryColor}>{suffix}</KnobSuffix>
+      </Flex>
     </Flex>
   );
 };

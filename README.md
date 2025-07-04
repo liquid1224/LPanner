@@ -1,6 +1,6 @@
 # LPanner VST3 Plugin
 
-**Version:** 1.1.2b 
+**Version:** 1.1.3
 **Developer:** liquid1224
 
 ![screenshot](/Readme.assets/screenshot.png)
@@ -111,6 +111,11 @@ MIT
 Create new issue for support, bug reports, or feature requests.
 
 ## Changelog
+
+### 1.1.3
+
+- Fixed some layouts
+- Holding down Ctrl while operating the knob and slider enables precision control
 
 ### 1.1.2b
 

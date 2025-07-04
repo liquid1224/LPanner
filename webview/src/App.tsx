@@ -6,7 +6,7 @@ import "@fontsource/zen-dots/latin.css";
 import JuceSwitcher from "./components/JuceSwitcher";
 import JuceSlider from "./components/JuceSlider";
 import JuceKnob from "./components/JuceKnob";
-import JuceBypassButton from "./components/JuceBypassButton";
+import Header from "./components/Header";
 
 // Plugin info type
 interface PluginInfo {
@@ -37,15 +37,6 @@ const STYLES = {
   stereoSection: {
     width: "100%",
   },
-  title: {
-    margin: "0",
-    fontWeight: "normal" as const,
-    color: THEME.colors.primary,
-  },
-  versionText: {
-    fontSize: "8px",
-    color: THEME.colors.primary,
-  },
   subtitle: {
     margin: "0",
     fontWeight: "normal" as const,
@@ -67,7 +58,7 @@ const STYLES = {
 
 const App: FC = () => {
   const [isModern, setIsModern] = useState<boolean>(false);
-  const [pluginInfo, setPluginInfo] = useState<PluginInfo | null>(null);
+  const [pluginInfo, setPluginInfo] = useState<PluginInfo>();
 
   // Get plugin info from C++
   useEffect(() => {
@@ -80,8 +71,6 @@ const App: FC = () => {
           version: info.version,
         });
       } catch (error) {
-        console.error("Failed to get plugin info:", error);
-        // Fallback
         setPluginInfo({
           name: "LPanner",
           version: "ERROR",
@@ -157,58 +146,39 @@ const App: FC = () => {
     setIsModern(index);
   };
 
-  // Header section
-  const renderHeader = () => (
-    <Flex align="center" gap="middle">
-      <Typography.Title level={1} style={STYLES.title}>
-        {pluginInfo?.name}
-      </Typography.Title>
-      <Typography.Text style={STYLES.versionText}>
-        Ver {pluginInfo?.version} <br />
-        by liquid1224
-      </Typography.Text>
-      <JuceBypassButton identifier="bypass" />
-    </Flex>
-  );
-
   // Stereo Image header section
   const renderStereoSection = () => (
-    <Flex justify="space-between" align="center" style={STYLES.stereoSection}>
-      <Flex gap="middle">
-        <Typography.Title level={2} style={STYLES.subtitle}>
-          Stereo Image:
-        </Typography.Title>
-        <JuceSwitcher identifier="stereoMode" titles={["Classic", "Modern"]} level={2} primaryColor={THEME.colors.primary} secondaryColor={THEME.colors.secondary} onChange={handleStereoModeChange} />
-      </Flex>
-      {isModern && (
-        <Flex align="center">
-          <Flex align="end">
-            <Typography.Title level={3} style={STYLES.delayTitle}>
-              Delay
-            </Typography.Title>
-            <Typography.Title level={4} style={STYLES.delayMS}>
-              {"[ms]"}
-            </Typography.Title>
-          </Flex>
-
-          <JuceKnob
-            identifier="delay"
-            min={1.0}
-            max={20.0}
-            defaultValue={5.0}
+    <>
+      <Flex justify="space-between" align="center" style={STYLES.stereoSection}>
+        <Flex gap="middle">
+          <Typography.Title level={2} style={STYLES.subtitle}>
+            Stereo Image:
+          </Typography.Title>
+          <JuceSwitcher
+            identifier="stereoMode"
+            titles={["Classic", "Modern"]}
+            level={2}
             primaryColor={THEME.colors.primary}
             secondaryColor={THEME.colors.secondary}
-            accentColor={THEME.colors.accent}
-            size={20}
+            onChange={handleStereoModeChange}
           />
         </Flex>
-      )}
-    </Flex>
-  );
-
-  // Stereo Image slider section
-  const renderStereoSlider = () => (
-    <JuceSlider identifier="stereo" min={0} max={200} mark={0.5} primaryColor={THEME.colors.primary} secondaryColor={THEME.colors.secondary} accentColor={THEME.colors.accent} />
+        <JuceKnob
+          title="delay"
+          suffix="ms"
+          identifier="delay"
+          min={1.0}
+          max={20.0}
+          defaultValue={5.0}
+          primaryColor={THEME.colors.primary}
+          secondaryColor={THEME.colors.secondary}
+          accentColor={THEME.colors.accent}
+          size={20}
+          disabled={!isModern}
+        />
+      </Flex>
+      <JuceSlider identifier="stereo" min={0} max={200} mark={0.5} primaryColor={THEME.colors.primary} secondaryColor={THEME.colors.secondary} accentColor={THEME.colors.accent} />
+    </>
   );
 
   // Rotation section
@@ -232,10 +202,9 @@ const App: FC = () => {
 
   return (
     <Layout className="root">
-      <Flex vertical gap="middle" justify="space-between" align="start" style={STYLES.rootContainer}>
-        {renderHeader()}
+      <Flex vertical justify="space-between" align="start" style={STYLES.rootContainer}>
+        <Header $primaryColor={THEME.colors.primary} pluginName={pluginInfo?.name as string} pluginVersion={pluginInfo?.version as string} />
         {renderStereoSection()}
-        {renderStereoSlider()}
         {renderRotationSection()}
       </Flex>
     </Layout>

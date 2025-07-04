@@ -51,6 +51,7 @@ assets.zip
 JuceLibraryCode
 Builds
 *.filtergraph
+AudioPluginHost.exe.lnk
 
 # Node
 ## Logs
